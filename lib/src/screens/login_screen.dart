@@ -10,7 +10,6 @@ import 'package:flutter_safetynet_attestation/flutter_safetynet_attestation.dart
 import '../options/user_options.dart';
 import 'fingerprint_screen.dart';
 
-
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -21,20 +20,18 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _passController = TextEditingController();
   TextEditingController _userController = TextEditingController();
   //Manage the OTP button
-   GooglePlayServicesAvailability _gmsStatus;
+  GooglePlayServicesAvailability _gmsStatus;
   static const _timerDuration = 30;
   StreamController _timerStream = new StreamController<int>();
   int timerCounter;
   Timer _resendCodeTimer;
   UserOptions options;
-  
 
   bool _init = true;
 
   @override
   void initState() {
     _activeCounter();
-    options = new UserOptions();
     initPlatformState();
     super.initState();
   }
@@ -55,7 +52,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-
   _activeCounter() {
     _resendCodeTimer = new Timer.periodic(Duration(seconds: 1), (Timer timer) {
       if (_timerDuration - timer.tick > 0 && !_init)
@@ -68,70 +64,83 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Secure Black Notebook')),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: [
-            //email field
-            StreamBuilder<String>(
-                stream: _bloc.userNameStream,
-                builder: (context, snapshot) {
-                  return userNameField(context, snapshot);
-                }),
+  Widget build(BuildContext context) => FutureBuilder(
+        future: UserOptions.getInstance(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            options = snapshot.data;
+            return Scaffold(
+              appBar: AppBar(title: Text('Secure Black Notebook')),
+              body: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView(
+                  children: [
+                    //email field
+                    StreamBuilder<String>(
+                        stream: _bloc.userNameStream,
+                        builder: (context, snapshot) {
+                          return userNameField(context, snapshot);
+                        }),
 
-            //Password Field
-            StreamBuilder<String>(
-              stream: _bloc.passwordStream,
-              builder: (context, snapshot) {
-                return passwordField(context, snapshot);
-              },
-            ),
+                    //Password Field
+                    StreamBuilder<String>(
+                      stream: _bloc.passwordStream,
+                      builder: (context, snapshot) {
+                        return passwordField(context, snapshot);
+                      },
+                    ),
 
-            //FORGET PASSWORD FIELD
+                    //FORGET PASSWORD FIELD
 
-            //SUBMIT BUTTON
-            StreamBuilder<bool>(
-                stream: _bloc.submitValid,
-                builder: (context, snapshot) {
-                  return _submitButton(context, snapshot);
-                }),
+                    //SUBMIT BUTTON
+                    StreamBuilder<bool>(
+                        stream: _bloc.submitValid,
+                        builder: (context, snapshot) {
+                          return _submitButton(context, snapshot);
+                        }),
 
-            //Add some padding
-            Padding(padding: EdgeInsets.only(top: 30.0)),
+                    //Add some padding
+                    Padding(padding: EdgeInsets.only(top: 30.0)),
 
-            //SIGN UP
-            _registerButton(),
+                    //SIGN UP
+                    _registerButton(),
 
-            Container(
-                          margin: EdgeInsets.symmetric(vertical: 15.0),
-                          width: double.infinity,
-                          child: RaisedButton(
-                            onPressed: (options.logInByFinger) ? (){
-                              Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => FingerScreen()));
-                            } : null,
-                            elevation: 0.0,
-                            color: Colors.blue,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0)),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 14.0, horizontal: 24.0),
-                              child: Text("Log in using fingerprint",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 15.0),
+                      width: double.infinity,
+                      child: RaisedButton(
+                        onPressed: (options.logInByFinger)
+                            ? () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => FingerScreen()));
+                              }
+                            : null,
+                        elevation: 0.0,
+                        color: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0)),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 14.0, horizontal: 24.0),
+                          child: Text(
+                            "Log in using fingerprint",
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
-          ],
-        ),
-      ),
-    );
-  }
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return CircularProgressIndicator();
+          }
+        },
+      );
 
   Widget userNameField(BuildContext context, dynamic snapshot) {
     return TextField(
@@ -174,7 +183,9 @@ class _LoginScreenState extends State<LoginScreen> {
               textColor: Theme.of(context).accentColor,
               child: Center(
                   child: snapshot.data == 0
-                      ? Text('Submit',)
+                      ? Text(
+                          'Submit',
+                        )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
@@ -193,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _showDialog(String dialogTitle,String dialogMessage) async {
+  Future<void> _showDialog(String dialogTitle, String dialogMessage) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -221,9 +232,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       String rand = _bloc.getRandom();
       JWSPayload res =
-          await FlutterSafetynetAttestation.safetyNetAttestationPayload(
-              rand);
-      if(!res.ctsProfileMatch){
+          await FlutterSafetynetAttestation.safetyNetAttestationPayload(rand);
+      if (!res.ctsProfileMatch) {
         dialogMessage = solveResponse(res);
         _showDialog("ERROR! Your device cannot use this app", dialogMessage);
       }
@@ -236,23 +246,24 @@ class _LoginScreenState extends State<LoginScreen> {
         dialogMessage = e?.toString();
       }
       _showDialog(dialogTitle, dialogMessage);
-    return false;
+      return false;
     }
   }
 
-   String solveResponse(JWSPayload response){
-    if(response.basicIntegrity)
+  String solveResponse(JWSPayload response) {
+    if (response.basicIntegrity)
       return "Your device has an unlocked bootloader or custom ROM";
-    else return "Emulated device or rooted device";
+    else
+      return "Emulated device or rooted device";
   }
 
   Future<void> _onPressSubmit(context) async {
     bool _registered = await _bloc.isRegistered();
     if (_registered) {
-        bool res = await _requestSafetyNetAttestation();
-        if(res) _logInUser(context); 
+      bool res = await _requestSafetyNetAttestation();
+      if (res) _logInUser(context);
     } else
-      _showDialog("Log In Failed","Not registered yet? Sign up");
+      _showDialog("Log In Failed", "Not registered yet? Sign up");
   }
 
   _goToNoteScreen(context) {
@@ -260,6 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => NoteBookScreen()));
   }
+
   _goToSignUpScreen(context) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => SignUp()));
   }
@@ -324,13 +336,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         var result = await _bloc.submitLogin();
 
                         if (result) {
-                
                           Navigator.of(context).pop();
                           _goToNoteScreen(context);
                         } else {
                           //Show the wrongPassword dialog
                           Navigator.of(context).pop();
-                          _showDialog("Wrong username/password","You have introduced the wrong password/username.");
+                          _showDialog("Wrong username/password",
+                              "You have introduced the wrong password/username.");
                           _timerStream.sink.add(30);
                           _activeCounter();
                         }
@@ -340,7 +352,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.of(context).pop();
                       _timerStream.sink.add(30);
                       _activeCounter();
-                      _showDialog("Log In Failed",message);
+                      _showDialog("Log In Failed", message);
                     }
                   },
                 )
@@ -364,11 +376,12 @@ class _LoginScreenState extends State<LoginScreen> {
             _goToNoteScreen(context);
           } else {
             //Show the wrongPassword dialog
-            _showDialog("Wrong username/password", "You have introduced the wrong password/username.");
+            _showDialog("Wrong username/password",
+                "You have introduced the wrong password/username.");
           }
         },
         verificationFailed: (FirebaseAuthException authException) {
-          _showDialog("Log In Failed",authException.message);
+          _showDialog("Log In Failed", authException.message);
         },
         codeSent: (String verID, int forceResendingToken) async {
           _codeSent(verID, forceResendingToken);
