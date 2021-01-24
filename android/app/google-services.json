@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "30999737377",
+    "project_id": "mobilesystems-525fb",
+    "storage_bucket": "mobilesystems-525fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:30999737377:android:e0b7d8a8ad3b52f96b1f60",
+        "android_client_info": {
+          "package_name": "com.sblackhat.MobileSystems"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "30999737377-vpd1k6h5tpejc6htvsimj9s2p9vf2v4n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sblackhat.MobileSystems",
+            "certificate_hash": "6172333781828320544d6e1670833bb861a01c35"
+          }
+        },
+        {
+          "client_id": "30999737377-a514rtlm0d1i9hv7b6uimpbfis2h1m6p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEfK4icHSThnCcrfMFKRuJ22PVDBhdx-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "30999737377-a514rtlm0d1i9hv7b6uimpbfis2h1m6p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
