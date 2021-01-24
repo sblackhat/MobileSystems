@@ -11,6 +11,8 @@ class ScreenHandler extends StatelessWidget {
       future: UserOptions.getInstance(),
       builder: (context, AsyncSnapshot<UserOptions> snapshot) {
         if (snapshot.hasData) {
+          print("heeee");
+          print(snapshot.data.logInByFinger);
           return (snapshot.data.logInByFinger) ? new FingerScreen() : new LoginScreen();
         } else {
           return CircularProgressIndicator();

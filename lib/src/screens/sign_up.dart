@@ -458,7 +458,6 @@ class _SignUpState extends State<SignUp> {
 
   _goToSuccessRegistration(context) {
     String message = options.logInByFinger ? "fingerprint" : "password";
-    print(options.logInByPassword);
     message = message + (options.logInByPassword ? " and password" : "");
     Navigator.push(
         context,

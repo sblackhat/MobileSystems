@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './handlers/screen_handler.dart';
+import './screens/login_screen.dart';
 
 class MyApp extends StatelessWidget{
 
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget{
       theme: ThemeData.dark(),
       title: 'Secure Notebook',
       home: Scaffold(
-        body: ScreenHandler.getInstance(),
+        body: LoginScreen(),
       ),
     );
   }

@@ -7,6 +7,8 @@ import 'package:MobileSystems/src/bloc/bloc_log_in.dart';
 import 'package:MobileSystems/src/screens/notebook_screen.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_safetynet_attestation/flutter_safetynet_attestation.dart';
+import '../options/user_options.dart';
+import 'fingerprint_screen.dart';
 
 
 class LoginScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   StreamController _timerStream = new StreamController<int>();
   int timerCounter;
   Timer _resendCodeTimer;
+  UserOptions options;
   
 
   bool _init = true;
@@ -31,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     _activeCounter();
+    options = new UserOptions();
     initPlatformState();
     super.initState();
   }
@@ -100,6 +104,29 @@ class _LoginScreenState extends State<LoginScreen> {
 
             //SIGN UP
             _registerButton(),
+
+            Container(
+                          margin: EdgeInsets.symmetric(vertical: 15.0),
+                          width: double.infinity,
+                          child: RaisedButton(
+                            onPressed: (options.logInByFinger) ? (){
+                              Navigator.pop(context);
+                              Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => FingerScreen()));
+                            } : null,
+                            elevation: 0.0,
+                            color: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0)),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 14.0, horizontal: 24.0),
+                              child: Text("Log in using fingerprint",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
           ],
         ),
       ),
