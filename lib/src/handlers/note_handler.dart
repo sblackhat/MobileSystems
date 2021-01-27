@@ -8,6 +8,7 @@ class NoteHandler{
  static init(HiveAesCipher cipher) async {
     //Initialize the Hive DB
       await Hive.initFlutter();//waits to initialize path on flutter with the default path
+      await DBOptions.init();
       DBOptions options = new DBOptions();
 
     try{
@@ -18,6 +19,8 @@ class NoteHandler{
     }catch(e){
       print("DB already init");
     }
+    print(options.notesDB);
+    print(cipher);
     await Hive.openBox<Note>(options.notesDB, encryptionCipher: cipher);//if it's the first time running, it will also create the "Box", else it will just open
     await Hive.openBox<TextNote>(options.textNotesDB, encryptionCipher: cipher);//this box will be used later for the Text Type entries
     await Hive.openBox<CheckListNote>(options.checkListDB, encryptionCipher: cipher);//this box will be used later for the Check List Type entries
@@ -26,7 +29,7 @@ class NoteHandler{
  static resetPass(HiveAesCipher cipher) async {
    //Get the options
    DBOptions options = new DBOptions();
-
+   await DBOptions.init();
    //Get the old boxes
    Box<Note> notes = Hive.box(options.notesDB);
    Box<TextNote> textnotes = Hive.box(options.textNotesDB);
@@ -58,6 +61,7 @@ class NoteHandler{
 
    //Create the new boxes
    await options.updateNames();
+   print(options.notesDB);
    await Hive.openBox<Note>(options.notesDB, encryptionCipher: cipher);//if it's the first time running, it will also create the "Box", else it will just open
    await Hive.openBox<TextNote>(options.textNotesDB, encryptionCipher: cipher);//this box will be used later for the Text Type entries
    await Hive.openBox<CheckListNote>(options.checkListDB, encryptionCipher: cipher);//this box will be used later for the Check List Type entries

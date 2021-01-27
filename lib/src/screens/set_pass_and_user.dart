@@ -20,7 +20,6 @@ class _SetPassandUserState extends State<SetPassandUser> {
   @override
   initState(){
     super.initState();
-    options = UserOptions.getInstance();
   }
 
   String _passwordValidator(String password) {
@@ -92,7 +91,11 @@ class _SetPassandUserState extends State<SetPassandUser> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => FutureBuilder(
+        future: UserOptions.getInstance(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            options = snapshot.data;
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(title: Text('Secure Black Notebook')),
@@ -176,5 +179,6 @@ class _SetPassandUserState extends State<SetPassandUser> {
         ),
       ),
     ));
-  }
+  }else return CircularProgressIndicator();
+});
 }

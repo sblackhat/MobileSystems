@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_safetynet_attestation/flutter_safetynet_attestation.dart';
 import '../options/user_options.dart';
 import 'fingerprint_screen.dart';
+import '../handlers/note_handler.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

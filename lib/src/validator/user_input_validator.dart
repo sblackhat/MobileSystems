@@ -128,7 +128,6 @@ class Validator {
     //Get the password for Hive
     List<int> key = _derivator2.process(new Uint8List.fromList(password.codeUnits));
 
-    print(options.logInByFinger);
     if(options.logInByFinger){
         final _authStorage = await BiometricStorage().getStorage("key");
         await _authStorage.write(String.fromCharCodes(key));

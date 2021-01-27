@@ -22,7 +22,7 @@ class DBOptions {
   String get textNotesDB => _text_notes_db;
   String get checkListDB => _checklist_notes_db;
 
-  init() async {
+  static init() async {
     _prefs = await SharedPreferences.getInstance();
 
     //If not initialized then create the settings of the DB
@@ -52,5 +52,6 @@ class DBOptions {
     await _prefs.setString(NOTES_KEY, _notes_db);
     await _prefs.setString(TEXT_NOTES_KEY, _text_notes_db);
     await _prefs.setString(CHECK_LIST_KEY, _checklist_notes_db);
+    await init();
   }
 }
