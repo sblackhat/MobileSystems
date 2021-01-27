@@ -83,7 +83,7 @@ class Validator {
       //Check the stored hashed key and the input key
       if (stored != null && hash == stored && (username==null || username==user)) {
         if (!_init) {
-          Uint8List key = _derivator2.process(password.codeUnits);
+          Uint8List key = _derivator2.process(new Uint8List.fromList(password.codeUnits));
           await NoteHandler.init(HiveAesCipher(key));
           _init = true;
         }
@@ -104,21 +104,10 @@ class Validator {
    Functions below are used in the registration process
                                                         */
 
-  static Future<bool> _writePass(String password) async {
-    print("hee");
+  static Future<bool> _writePass(String password, {String username}) async {
     try{
-    await Validator.init();
     //Confirm the Bio if change the pass
     UserOptions options = new UserOptions();
-    print(password);
-    //Get the password for Hive
-    List<int> key = _derivator2.process(new Uint8List.fromList(password.codeUnits));
-
-    print(options.logInByFinger);
-    if(options.logInByFinger){
-        final _authStorage = await BiometricStorage().getStorage("key");
-        await _authStorage.write(String.fromCharCodes(key));
-      }
     //Write new salt
     //Create a new salt every time the password changes
     final rnd = new FortunaRandom()..seed(new KeyParameter(new Uint8List(32)));
@@ -135,15 +124,22 @@ class Validator {
     //Get the passHash;
     final hashed = await Validator._getHashedPass(password);
     await _secure.write(key: "password", value: hashed);
-    print("heeeee");
-    if(reset){
+    await _secure.write(key: "username", value: username);
+    //Get the password for Hive
+    List<int> key = _derivator2.process(new Uint8List.fromList(password.codeUnits));
+
+    print(options.logInByFinger);
+    if(options.logInByFinger){
+        final _authStorage = await BiometricStorage().getStorage("key");
+        await _authStorage.write(String.fromCharCodes(key));
+      }
+    if(reset || (options.logInByFinger && !options.logInByPassword)){
       await NoteHandler.resetPass(HiveAesCipher(key));
     }
     return true;
     }catch (e){
       print(e.runtimeType);
       print(e);
-      print("faaaa");
       return false;
     }
   }
@@ -170,9 +166,23 @@ class Validator {
 
   static Future<bool> registerUserName(
       {String username, String password, String phone}) async {
-    if (password != null) return await _writePass(password);
-    if (username != null) _secure.write(key: "username", value: username);
-    if (phone != null) _secure.write(key: "phone", value: phone);
+    if (password != null) return await _writePass(password,username: username);
+    if (username != null){
+      try{
+     _secure.write(key: "username", value: username);
+     return true;
+     }catch(e){
+       return false;
+     }
+    }
+    if (phone != null){
+      try{
+      _secure.write(key: "phone", value: phone);
+     return true;
+     }catch(e){
+       return false;
+     }
+    }
     else await registerFingerprint();
   }
 }

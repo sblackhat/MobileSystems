@@ -260,15 +260,28 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _onPressSubmit(context) async {
     bool _registered = await _bloc.isRegistered();
     if (_registered) {
-      bool res = await _requestSafetyNetAttestation();
-      if (res) _logInUser(context);
+      if(options.smsOTP){
+        bool res = await _requestSafetyNetAttestation();
+        if (res) _logInUser(context);
+      }else if(!options.smsOTP){
+        var result = await _bloc.submitLogin();
+
+          if (result) {
+            Navigator.of(context).pop();
+            _goToNoteScreen(context);
+          } else {
+            //Show the wrongPassword dialog
+            _showDialog("Wrong username/password",
+                "You have introduced the wrong password/username.");
+          }
+      }
     } else
       _showDialog("Log In Failed", "Not registered yet? Sign up");
   }
 
   _goToNoteScreen(context) {
     _clearLoginScreen();
-    Navigator.pushReplacement(
+    Navigator.push(
         context, MaterialPageRoute(builder: (context) => NoteBookScreen()));
   }
 

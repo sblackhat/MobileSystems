@@ -148,7 +148,11 @@ class _FingerScreenState extends State<FingerScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => FutureBuilder(
+        future: UserOptions.getInstance(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            options = snapshot.data;
     return SafeArea(
         child: Scaffold(
       backgroundColor: Color(0x37474F),
@@ -249,6 +253,10 @@ class _FingerScreenState extends State<FingerScreen> {
           ],
         ),
       ),
-    ));
+    )
+    );
+  }else{
+    return CircularProgressIndicator();
   }
+});
 }

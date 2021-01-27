@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../validator/validator_helpers.dart';
 import '../validator/user_input_validator.dart';
+import '../options/user_options.dart';
 
 class SetPassandUser extends StatefulWidget {
   @override
@@ -14,6 +15,13 @@ class _SetPassandUserState extends State<SetPassandUser> {
   final TextEditingController _passwordRepeat = TextEditingController();
   final TextEditingController _userName = TextEditingController();
   var _passwordRepeatValidator;
+  UserOptions options;
+
+  @override
+  initState(){
+    super.initState();
+    options = UserOptions.getInstance();
+  }
 
   String _passwordValidator(String password) {
     if (password == null || password.isEmpty) {
@@ -48,11 +56,12 @@ class _SetPassandUserState extends State<SetPassandUser> {
       bool res = await Validator.registerUserName(password: password, username: _userName.text);
       if(res){
       _showResult('Log in by password set', 'You have set the login by password succesfuly');
+      await options.setOptions(password: true);
       _passwordRepeat.clear();
       _newPassword.clear();
       _userName.clear();
       }else{
-        _showResult("Log in by pass failed", "Try again");
+        _showResult("Registering user and password failed", "Try again");
       }
     } else{
         _showResult("Log in by password cannot be set", "Check the form fields.");
@@ -80,11 +89,6 @@ class _SetPassandUserState extends State<SetPassandUser> {
         );
       },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
   }
 
   @override
